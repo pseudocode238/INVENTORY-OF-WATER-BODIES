@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/KASAYMARINESANCTUARY_SHP_2.js"></script>
+        <script src="data/LINGSATMARINESANCTUARY_SHP_3.js"></script>
+        <script src="data/NAGUILIANWATERSHED_4.js"></script>
+        <script src="data/50MBUFFERWATERWAYS_5.js"></script>
+        <script src="data/50MBUFFER_COASTAL_6.js"></script>
+        <script src="data/HIGH_TIDE_7.js"></script>
+        <script src="data/HOUSEHOLDS_COASTAL_8.js"></script>
+        <script src="data/HOUSEHOLDS_WATERWAYS_9.js"></script>
+        <script src="data/POROBUFFERZONE_SHP_10.js"></script>
+        <script src="data/POROCOREZONE_SHP_11.js"></script>
+        <script src="data/SFCPOLITICALBOUNDARIES_12.js"></script>
+        <script src="data/SURVEYEDWATERWAYS_13.js"></script>
+        <script src="data/WELLSPRINGSMGB_14.js"></script>
+        <script src="data/BAROROWATERSHED_15.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_GoogleMaps_0');
+        map.getPane('pane_GoogleMaps_0').style.zIndex = 400;
+        var layer_GoogleMaps_0 = L.tileLayer('http://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 22
+        });
+        layer_GoogleMaps_0;
+        map.addLayer(layer_GoogleMaps_0);
+        map.createPane('pane_GoogleSatelliteHybrid_1');
+        map.getPane('pane_GoogleSatelliteHybrid_1').style.zIndex = 401;
+        var layer_GoogleSatelliteHybrid_1 = L.tileLayer('http://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatelliteHybrid_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 22
+        });
+        layer_GoogleSatelliteHybrid_1;
+        map.addLayer(layer_GoogleSatelliteHybrid_1);
+        function pop_KASAYMARINESANCTUARY_SHP_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_1'] !== null ? autolinker.link(feature.properties['NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KASAYMARINESANCTUARY_SHP_2_0() {
+            return {
+                pane: 'pane_KASAYMARINESANCTUARY_SHP_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(232,113,141,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_KASAYMARINESANCTUARY_SHP_2');
+        map.getPane('pane_KASAYMARINESANCTUARY_SHP_2').style.zIndex = 402;
+        map.getPane('pane_KASAYMARINESANCTUARY_SHP_2').style['mix-blend-mode'] = 'normal';
+        var layer_KASAYMARINESANCTUARY_SHP_2 = new L.geoJson(json_KASAYMARINESANCTUARY_SHP_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KASAYMARINESANCTUARY_SHP_2',
+            layerName: 'layer_KASAYMARINESANCTUARY_SHP_2',
+            pane: 'pane_KASAYMARINESANCTUARY_SHP_2',
+            onEachFeature: pop_KASAYMARINESANCTUARY_SHP_2,
+            style: style_KASAYMARINESANCTUARY_SHP_2_0,
+        });
+        bounds_group.addLayer(layer_KASAYMARINESANCTUARY_SHP_2);
+        map.addLayer(layer_KASAYMARINESANCTUARY_SHP_2);
+        function pop_LINGSATMARINESANCTUARY_SHP_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_0'] !== null ? autolinker.link(feature.properties['NAME_0'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_LINGSATMARINESANCTUARY_SHP_3_0() {
+            return {
+                pane: 'pane_LINGSATMARINESANCTUARY_SHP_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,158,23,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_LINGSATMARINESANCTUARY_SHP_3');
+        map.getPane('pane_LINGSATMARINESANCTUARY_SHP_3').style.zIndex = 403;
+        map.getPane('pane_LINGSATMARINESANCTUARY_SHP_3').style['mix-blend-mode'] = 'normal';
+        var layer_LINGSATMARINESANCTUARY_SHP_3 = new L.geoJson(json_LINGSATMARINESANCTUARY_SHP_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_LINGSATMARINESANCTUARY_SHP_3',
+            layerName: 'layer_LINGSATMARINESANCTUARY_SHP_3',
+            pane: 'pane_LINGSATMARINESANCTUARY_SHP_3',
+            onEachFeature: pop_LINGSATMARINESANCTUARY_SHP_3,
+            style: style_LINGSATMARINESANCTUARY_SHP_3_0,
+        });
+        bounds_group.addLayer(layer_LINGSATMARINESANCTUARY_SHP_3);
+        map.addLayer(layer_LINGSATMARINESANCTUARY_SHP_3);
+        function pop_NAGUILIANWATERSHED_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_1'] !== null ? autolinker.link(feature.properties['NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_NAGUILIANWATERSHED_4_0() {
+            return {
+                pane: 'pane_NAGUILIANWATERSHED_4',
+                interactive: true,
+            }
+        }
+        function style_NAGUILIANWATERSHED_4_1() {
+            return {
+                pane: 'pane_NAGUILIANWATERSHED_4',
+                opacity: 1,
+                color: 'rgba(128,62,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_NAGUILIANWATERSHED_4');
+        map.getPane('pane_NAGUILIANWATERSHED_4').style.zIndex = 404;
+        map.getPane('pane_NAGUILIANWATERSHED_4').style['mix-blend-mode'] = 'normal';
+        var layer_NAGUILIANWATERSHED_4 = new L.geoJson.multiStyle(json_NAGUILIANWATERSHED_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_NAGUILIANWATERSHED_4',
+            layerName: 'layer_NAGUILIANWATERSHED_4',
+            pane: 'pane_NAGUILIANWATERSHED_4',
+            onEachFeature: pop_NAGUILIANWATERSHED_4,
+            styles: [style_NAGUILIANWATERSHED_4_0,style_NAGUILIANWATERSHED_4_1,]
+        });
+        bounds_group.addLayer(layer_NAGUILIANWATERSHED_4);
+        map.addLayer(layer_NAGUILIANWATERSHED_4);
+        function pop_50MBUFFERWATERWAYS_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_50MBUFFERWATERWAYS_5_0() {
+            return {
+                pane: 'pane_50MBUFFERWATERWAYS_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,182,54,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_50MBUFFERWATERWAYS_5');
+        map.getPane('pane_50MBUFFERWATERWAYS_5').style.zIndex = 405;
+        map.getPane('pane_50MBUFFERWATERWAYS_5').style['mix-blend-mode'] = 'normal';
+        var layer_50MBUFFERWATERWAYS_5 = new L.geoJson(json_50MBUFFERWATERWAYS_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_50MBUFFERWATERWAYS_5',
+            layerName: 'layer_50MBUFFERWATERWAYS_5',
+            pane: 'pane_50MBUFFERWATERWAYS_5',
+            onEachFeature: pop_50MBUFFERWATERWAYS_5,
+            style: style_50MBUFFERWATERWAYS_5_0,
+        });
+        bounds_group.addLayer(layer_50MBUFFERWATERWAYS_5);
+        map.addLayer(layer_50MBUFFERWATERWAYS_5);
+        function pop_50MBUFFER_COASTAL_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_50MBUFFER_COASTAL_6_0() {
+            return {
+                pane: 'pane_50MBUFFER_COASTAL_6',
+                opacity: 1,
+                color: 'rgba(252,200,12,1.0)',
+                dashArray: '',
+                lineCap: 'round',
+                lineJoin: 'round',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_50MBUFFER_COASTAL_6');
+        map.getPane('pane_50MBUFFER_COASTAL_6').style.zIndex = 406;
+        map.getPane('pane_50MBUFFER_COASTAL_6').style['mix-blend-mode'] = 'normal';
+        var layer_50MBUFFER_COASTAL_6 = new L.geoJson(json_50MBUFFER_COASTAL_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_50MBUFFER_COASTAL_6',
+            layerName: 'layer_50MBUFFER_COASTAL_6',
+            pane: 'pane_50MBUFFER_COASTAL_6',
+            onEachFeature: pop_50MBUFFER_COASTAL_6,
+            style: style_50MBUFFER_COASTAL_6_0,
+        });
+        bounds_group.addLayer(layer_50MBUFFER_COASTAL_6);
+        map.addLayer(layer_50MBUFFER_COASTAL_6);
+        function pop_HIGH_TIDE_7(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DESC'] !== null ? autolinker.link(feature.properties['DESC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_HIGH_TIDE_7_0() {
+            return {
+                pane: 'pane_HIGH_TIDE_7',
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_HIGH_TIDE_7');
+        map.getPane('pane_HIGH_TIDE_7').style.zIndex = 407;
+        map.getPane('pane_HIGH_TIDE_7').style['mix-blend-mode'] = 'normal';
+        var layer_HIGH_TIDE_7 = new L.geoJson(json_HIGH_TIDE_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_HIGH_TIDE_7',
+            layerName: 'layer_HIGH_TIDE_7',
+            pane: 'pane_HIGH_TIDE_7',
+            onEachFeature: pop_HIGH_TIDE_7,
+            style: style_HIGH_TIDE_7_0,
+        });
+        bounds_group.addLayer(layer_HIGH_TIDE_7);
+        map.addLayer(layer_HIGH_TIDE_7);
+        function pop_HOUSEHOLDS_COASTAL_8(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_HOUSEHOLDS_COASTAL_8_0() {
+            return {
+                pane: 'pane_HOUSEHOLDS_COASTAL_8',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(179,93,142,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(242,125,191,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_HOUSEHOLDS_COASTAL_8');
+        map.getPane('pane_HOUSEHOLDS_COASTAL_8').style.zIndex = 408;
+        map.getPane('pane_HOUSEHOLDS_COASTAL_8').style['mix-blend-mode'] = 'normal';
+        var layer_HOUSEHOLDS_COASTAL_8 = new L.geoJson(json_HOUSEHOLDS_COASTAL_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_HOUSEHOLDS_COASTAL_8',
+            layerName: 'layer_HOUSEHOLDS_COASTAL_8',
+            pane: 'pane_HOUSEHOLDS_COASTAL_8',
+            onEachFeature: pop_HOUSEHOLDS_COASTAL_8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_HOUSEHOLDS_COASTAL_8_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_HOUSEHOLDS_COASTAL_8);
+        map.addLayer(layer_HOUSEHOLDS_COASTAL_8);
+        function pop_HOUSEHOLDS_WATERWAYS_9(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_HOUSEHOLDS_WATERWAYS_9_0() {
+            return {
+                pane: 'pane_HOUSEHOLDS_WATERWAYS_9',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,182,111,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_HOUSEHOLDS_WATERWAYS_9');
+        map.getPane('pane_HOUSEHOLDS_WATERWAYS_9').style.zIndex = 409;
+        map.getPane('pane_HOUSEHOLDS_WATERWAYS_9').style['mix-blend-mode'] = 'normal';
+        var layer_HOUSEHOLDS_WATERWAYS_9 = new L.geoJson(json_HOUSEHOLDS_WATERWAYS_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_HOUSEHOLDS_WATERWAYS_9',
+            layerName: 'layer_HOUSEHOLDS_WATERWAYS_9',
+            pane: 'pane_HOUSEHOLDS_WATERWAYS_9',
+            onEachFeature: pop_HOUSEHOLDS_WATERWAYS_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_HOUSEHOLDS_WATERWAYS_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_HOUSEHOLDS_WATERWAYS_9);
+        map.addLayer(layer_HOUSEHOLDS_WATERWAYS_9);
+        function pop_POROBUFFERZONE_SHP_10(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_1'] !== null ? autolinker.link(feature.properties['NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_POROBUFFERZONE_SHP_10_0() {
+            return {
+                pane: 'pane_POROBUFFERZONE_SHP_10',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(231,113,72,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_POROBUFFERZONE_SHP_10');
+        map.getPane('pane_POROBUFFERZONE_SHP_10').style.zIndex = 410;
+        map.getPane('pane_POROBUFFERZONE_SHP_10').style['mix-blend-mode'] = 'normal';
+        var layer_POROBUFFERZONE_SHP_10 = new L.geoJson(json_POROBUFFERZONE_SHP_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_POROBUFFERZONE_SHP_10',
+            layerName: 'layer_POROBUFFERZONE_SHP_10',
+            pane: 'pane_POROBUFFERZONE_SHP_10',
+            onEachFeature: pop_POROBUFFERZONE_SHP_10,
+            style: style_POROBUFFERZONE_SHP_10_0,
+        });
+        bounds_group.addLayer(layer_POROBUFFERZONE_SHP_10);
+        map.addLayer(layer_POROBUFFERZONE_SHP_10);
+        function pop_POROCOREZONE_SHP_11(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_POROCOREZONE_SHP_11_0() {
+            return {
+                pane: 'pane_POROCOREZONE_SHP_11',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(152,125,183,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_POROCOREZONE_SHP_11');
+        map.getPane('pane_POROCOREZONE_SHP_11').style.zIndex = 411;
+        map.getPane('pane_POROCOREZONE_SHP_11').style['mix-blend-mode'] = 'normal';
+        var layer_POROCOREZONE_SHP_11 = new L.geoJson(json_POROCOREZONE_SHP_11, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_POROCOREZONE_SHP_11',
+            layerName: 'layer_POROCOREZONE_SHP_11',
+            pane: 'pane_POROCOREZONE_SHP_11',
+            onEachFeature: pop_POROCOREZONE_SHP_11,
+            style: style_POROCOREZONE_SHP_11_0,
+        });
+        bounds_group.addLayer(layer_POROCOREZONE_SHP_11);
+        map.addLayer(layer_POROCOREZONE_SHP_11);
+        function pop_SFCPOLITICALBOUNDARIES_12(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['BARANGAY N'] !== null ? autolinker.link(feature.properties['BARANGAY N'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SFCPOLITICALBOUNDARIES_12_0() {
+            return {
+                pane: 'pane_SFCPOLITICALBOUNDARIES_12',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '1,5',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_SFCPOLITICALBOUNDARIES_12');
+        map.getPane('pane_SFCPOLITICALBOUNDARIES_12').style.zIndex = 412;
+        map.getPane('pane_SFCPOLITICALBOUNDARIES_12').style['mix-blend-mode'] = 'normal';
+        var layer_SFCPOLITICALBOUNDARIES_12 = new L.geoJson(json_SFCPOLITICALBOUNDARIES_12, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SFCPOLITICALBOUNDARIES_12',
+            layerName: 'layer_SFCPOLITICALBOUNDARIES_12',
+            pane: 'pane_SFCPOLITICALBOUNDARIES_12',
+            onEachFeature: pop_SFCPOLITICALBOUNDARIES_12,
+            style: style_SFCPOLITICALBOUNDARIES_12_0,
+        });
+        bounds_group.addLayer(layer_SFCPOLITICALBOUNDARIES_12);
+        map.addLayer(layer_SFCPOLITICALBOUNDARIES_12);
+        function pop_SURVEYEDWATERWAYS_13(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FID'] !== null ? autolinker.link(feature.properties['FID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_WATER'] !== null ? autolinker.link(feature.properties['NAME_WATER'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SURVEYEDWATERWAYS_13_0() {
+            return {
+                pane: 'pane_SURVEYEDWATERWAYS_13',
+                opacity: 1,
+                color: 'rgba(19,8,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_SURVEYEDWATERWAYS_13');
+        map.getPane('pane_SURVEYEDWATERWAYS_13').style.zIndex = 413;
+        map.getPane('pane_SURVEYEDWATERWAYS_13').style['mix-blend-mode'] = 'normal';
+        var layer_SURVEYEDWATERWAYS_13 = new L.geoJson(json_SURVEYEDWATERWAYS_13, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SURVEYEDWATERWAYS_13',
+            layerName: 'layer_SURVEYEDWATERWAYS_13',
+            pane: 'pane_SURVEYEDWATERWAYS_13',
+            onEachFeature: pop_SURVEYEDWATERWAYS_13,
+            style: style_SURVEYEDWATERWAYS_13_0,
+        });
+        bounds_group.addLayer(layer_SURVEYEDWATERWAYS_13);
+        map.addLayer(layer_SURVEYEDWATERWAYS_13);
+        function pop_WELLSPRINGSMGB_14(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PUROK_BARA'] !== null ? autolinker.link(feature.properties['PUROK_BARA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lat__Degde'] !== null ? autolinker.link(feature.properties['Lat__Degde'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Long__Degd'] !== null ? autolinker.link(feature.properties['Long__Degd'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['WELL_NO__I'] !== null ? autolinker.link(feature.properties['WELL_NO__I'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_WELLSPRINGSMGB_14_0() {
+            return {
+                pane: 'pane_WELLSPRINGSMGB_14',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,182,54,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_WELLSPRINGSMGB_14');
+        map.getPane('pane_WELLSPRINGSMGB_14').style.zIndex = 414;
+        map.getPane('pane_WELLSPRINGSMGB_14').style['mix-blend-mode'] = 'normal';
+        var layer_WELLSPRINGSMGB_14 = new L.geoJson(json_WELLSPRINGSMGB_14, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_WELLSPRINGSMGB_14',
+            layerName: 'layer_WELLSPRINGSMGB_14',
+            pane: 'pane_WELLSPRINGSMGB_14',
+            onEachFeature: pop_WELLSPRINGSMGB_14,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_WELLSPRINGSMGB_14_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_WELLSPRINGSMGB_14);
+        map.addLayer(layer_WELLSPRINGSMGB_14);
+        function pop_BAROROWATERSHED_15(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME_1'] !== null ? autolinker.link(feature.properties['NAME_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_BAROROWATERSHED_15_0() {
+            return {
+                pane: 'pane_BAROROWATERSHED_15',
+                interactive: true,
+            }
+        }
+        function style_BAROROWATERSHED_15_1() {
+            return {
+                pane: 'pane_BAROROWATERSHED_15',
+                opacity: 1,
+                color: 'rgba(247,225,55,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BAROROWATERSHED_15');
+        map.getPane('pane_BAROROWATERSHED_15').style.zIndex = 415;
+        map.getPane('pane_BAROROWATERSHED_15').style['mix-blend-mode'] = 'normal';
+        var layer_BAROROWATERSHED_15 = new L.geoJson.multiStyle(json_BAROROWATERSHED_15, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BAROROWATERSHED_15',
+            layerName: 'layer_BAROROWATERSHED_15',
+            pane: 'pane_BAROROWATERSHED_15',
+            onEachFeature: pop_BAROROWATERSHED_15,
+            styles: [style_BAROROWATERSHED_15_0,style_BAROROWATERSHED_15_1,]
+        });
+        bounds_group.addLayer(layer_BAROROWATERSHED_15);
+        map.addLayer(layer_BAROROWATERSHED_15);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/BAROROWATERSHED_15.png" /> BARORO WATERSHED': layer_BAROROWATERSHED_15,'<img src="legend/WELLSPRINGSMGB_14.png" /> WELLSPRINGS (MGB)': layer_WELLSPRINGSMGB_14,'<img src="legend/SURVEYEDWATERWAYS_13.png" /> SURVEYED WATERWAYS': layer_SURVEYEDWATERWAYS_13,'<img src="legend/SFCPOLITICALBOUNDARIES_12.png" /> SFC POLITICAL BOUNDARIES': layer_SFCPOLITICALBOUNDARIES_12,'<img src="legend/POROCOREZONE_SHP_11.png" /> PORO CORE ZONE_SHP': layer_POROCOREZONE_SHP_11,'<img src="legend/POROBUFFERZONE_SHP_10.png" /> PORO BUFFER ZONE_SHP': layer_POROBUFFERZONE_SHP_10,'<img src="legend/HOUSEHOLDS_WATERWAYS_9.png" /> HOUSEHOLDS_WATERWAYS': layer_HOUSEHOLDS_WATERWAYS_9,'<img src="legend/HOUSEHOLDS_COASTAL_8.png" /> HOUSEHOLDS_COASTAL': layer_HOUSEHOLDS_COASTAL_8,'<img src="legend/HIGH_TIDE_7.png" /> HIGH_TIDE': layer_HIGH_TIDE_7,'<img src="legend/50MBUFFER_COASTAL_6.png" /> 50MBUFFER_COASTAL': layer_50MBUFFER_COASTAL_6,'<img src="legend/50MBUFFERWATERWAYS_5.png" /> 50M BUFFER WATERWAYS': layer_50MBUFFERWATERWAYS_5,'<img src="legend/NAGUILIANWATERSHED_4.png" /> NAGUILIAN WATERSHED': layer_NAGUILIANWATERSHED_4,'<img src="legend/LINGSATMARINESANCTUARY_SHP_3.png" /> LINGSAT MARINE SANCTUARY_SHP': layer_LINGSATMARINESANCTUARY_SHP_3,'<img src="legend/KASAYMARINESANCTUARY_SHP_2.png" /> KASAY MARINE SANCTUARY_SHP': layer_KASAYMARINESANCTUARY_SHP_2,"Google Satellite Hybrid": layer_GoogleSatelliteHybrid_1,"Google Maps": layer_GoogleMaps_0,}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_LINGSATMARINESANCTUARY_SHP_3.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAME_0'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['NAME_0']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_LINGSATMARINESANCTUARY_SHP_3'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_NAGUILIANWATERSHED_4.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAME_1'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['NAME_1']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_NAGUILIANWATERSHED_4'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_HIGH_TIDE_7.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['DESC'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['DESC']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_HIGH_TIDE_7'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_POROBUFFERZONE_SHP_10.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAME_1'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['NAME_1']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_POROBUFFERZONE_SHP_10'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_POROCOREZONE_SHP_11.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAME'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['NAME']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_POROCOREZONE_SHP_11'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_SFCPOLITICALBOUNDARIES_12.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['BARANGAY N'] !== null?String('<div style="color: #323232; font-size: 20pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['BARANGAY N']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_SFCPOLITICALBOUNDARIES_12'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_WELLSPRINGSMGB_14.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['WELL_NO__I'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['WELL_NO__I']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_WELLSPRINGSMGB_14'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_BAROROWATERSHED_15.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAME_1'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['NAME_1']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_BAROROWATERSHED_15'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_LINGSATMARINESANCTUARY_SHP_3,layer_NAGUILIANWATERSHED_4,layer_HIGH_TIDE_7,layer_POROBUFFERZONE_SHP_10,layer_POROCOREZONE_SHP_11,layer_SFCPOLITICALBOUNDARIES_12,layer_WELLSPRINGSMGB_14,layer_BAROROWATERSHED_15]);
+        map.on("zoomend", function(){
+            resetLabels([layer_LINGSATMARINESANCTUARY_SHP_3,layer_NAGUILIANWATERSHED_4,layer_HIGH_TIDE_7,layer_POROBUFFERZONE_SHP_10,layer_POROCOREZONE_SHP_11,layer_SFCPOLITICALBOUNDARIES_12,layer_WELLSPRINGSMGB_14,layer_BAROROWATERSHED_15]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_LINGSATMARINESANCTUARY_SHP_3,layer_NAGUILIANWATERSHED_4,layer_HIGH_TIDE_7,layer_POROBUFFERZONE_SHP_10,layer_POROCOREZONE_SHP_11,layer_SFCPOLITICALBOUNDARIES_12,layer_WELLSPRINGSMGB_14,layer_BAROROWATERSHED_15]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_LINGSATMARINESANCTUARY_SHP_3,layer_NAGUILIANWATERSHED_4,layer_HIGH_TIDE_7,layer_POROBUFFERZONE_SHP_10,layer_POROCOREZONE_SHP_11,layer_SFCPOLITICALBOUNDARIES_12,layer_WELLSPRINGSMGB_14,layer_BAROROWATERSHED_15]);
+        });
+        </script>
+    </body>
+</html>
